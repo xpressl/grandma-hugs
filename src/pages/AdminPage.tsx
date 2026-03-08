@@ -277,8 +277,20 @@ const AdminPage = () => {
                 <FieldInput label="Name *" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} />
                 <FieldInput label="Hebrew Name" value={form.hebrew_name} onChange={(v) => setForm((f) => ({ ...f, hebrew_name: v }))} dir="rtl" />
                 <FieldInput label="Relationship" value={form.relationship} onChange={(v) => setForm((f) => ({ ...f, relationship: v }))} placeholder="e.g. Granddaughter, Son" />
-                <FieldInput label="Birthday (English)" value={form.birthday_english} onChange={(v) => setForm((f) => ({ ...f, birthday_english: v }))} type="date" />
-                <FieldInput label="Birthday (Hebrew)" value={form.birthday_hebrew} onChange={(v) => setForm((f) => ({ ...f, birthday_hebrew: v }))} placeholder="e.g. 8 Adar" />
+                <FieldInput label="Birthday (English)" value={form.birthday_english} onChange={(v) => {
+                  setForm((f) => {
+                    let hebrewBday = f.birthday_hebrew;
+                    if (v) {
+                      try {
+                        const d = new Date(v + "T00:00:00");
+                        const jd = toJewishDate(d);
+                        hebrewBday = formatJewishDateInHebrew(jd);
+                      } catch { /* ignore */ }
+                    }
+                    return { ...f, birthday_english: v, birthday_hebrew: hebrewBday };
+                  });
+                }} type="date" />
+                <FieldInput label="Birthday (Hebrew)" value={form.birthday_hebrew} onChange={(v) => setForm((f) => ({ ...f, birthday_hebrew: v }))} placeholder="Auto-calculated or enter manually" dir="rtl" />
                 <FieldInput label="Birth Year" value={form.birth_year} onChange={(v) => setForm((f) => ({ ...f, birth_year: v }))} type="number" placeholder="e.g. 2018" />
                 <FieldInput label="Generation" value={form.generation} onChange={(v) => setForm((f) => ({ ...f, generation: v }))} type="number" placeholder="0=Grandparents, 1=Children, 2=Grandchildren" />
 

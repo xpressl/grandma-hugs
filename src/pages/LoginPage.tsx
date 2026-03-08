@@ -28,7 +28,7 @@ const LoginPage = () => {
 
     login(code.trim());
     toast.success(`Welcome, ${data.name}! 💛`);
-    setChecking(false);
+    window.location.href = "/";
   };
 
   return (

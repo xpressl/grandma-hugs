@@ -1,10 +1,13 @@
 import { useState, useRef } from "react";
 import { useFamilyMembers, useAddFamilyMember, useUpdateFamilyMember, useDeleteFamilyMember, uploadFamilyPhoto, useOccasions, useAddOccasion, useDeleteOccasion, uploadMusicFile } from "@/hooks/useFamilyData";
 import type { FamilyMember, Occasion } from "@/hooks/useFamilyData";
-import { ArrowLeft, Plus, Trash2, Camera, Pencil, Music } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Camera, Pencil, Music, Key, Copy, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { toJewishDate, formatJewishDateInHebrew } from "jewish-date";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAccessCode } from "@/hooks/useAccessCode";
 
 const AdminPage = () => {
   const navigate = useNavigate();

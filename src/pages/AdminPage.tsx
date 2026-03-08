@@ -210,15 +210,22 @@ const AdminPage = () => {
 
             {/* Parent selector */}
             <div>
-              <label className="block text-grandma-sm font-bold text-foreground mb-1">Parent</label>
+              <label className="block text-grandma-sm font-bold text-foreground mb-1">
+                👨‍👩‍👧 Parent (Who is their parent?)
+              </label>
+              <p className="text-sm text-muted-foreground mb-2">
+                {members.length === 0
+                  ? "💡 Add grandparents first — they don't need a parent."
+                  : "Select who this person's parent is in the family."}
+              </p>
               <select
                 value={form.parent_id}
                 onChange={(e) => setForm((f) => ({ ...f, parent_id: e.target.value }))}
                 className="w-full rounded-2xl border border-border bg-card p-4 text-grandma-sm text-foreground"
               >
-                <option value="">No parent (root)</option>
+                <option value="">— No parent (grandparent level) —</option>
                 {members.filter((m) => m.id !== editing?.id).map((m) => (
-                  <option key={m.id} value={m.id}>{m.name} ({m.relationship})</option>
+                  <option key={m.id} value={m.id}>↳ {m.name} ({m.relationship})</option>
                 ))}
               </select>
             </div>

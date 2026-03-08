@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        joy: {
+          gold: "hsl(var(--joy-gold))",
+          rose: "hsl(var(--joy-rose))",
+          sage: "hsl(var(--joy-sage))",
+          cream: "hsl(var(--joy-cream))",
+          brown: "hsl(var(--joy-warm-brown))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,6 +64,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      fontFamily: {
+        display: ['Merriweather', 'serif'],
+        body: ['Nunito', 'sans-serif'],
+      },
+      fontSize: {
+        'grandma-sm': ['18px', '1.5'],
+        'grandma-base': ['20px', '1.5'],
+        'grandma-lg': ['24px', '1.4'],
+        'grandma-xl': ['32px', '1.3'],
+        'grandma-2xl': ['40px', '1.2'],
+        'grandma-3xl': ['52px', '1.1'],
       },
       borderRadius: {
         lg: "var(--radius)",

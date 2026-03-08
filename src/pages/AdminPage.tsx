@@ -489,6 +489,68 @@ const AdminPage = () => {
           </div>
         </div>
       )}
+
+      {tab === "codes" && (
+        <div className="space-y-6">
+          <div className="bg-card rounded-2xl p-5 border border-border space-y-3">
+            <h2 className="font-display text-grandma-lg text-foreground">🔑 Create Access Code</h2>
+            <p className="text-grandma-sm text-muted-foreground">
+              Share these codes with family so they can log in and view/update info.
+            </p>
+            <FieldInput label="Name *" value={newCodeForm.name} onChange={(v) => setNewCodeForm((f) => ({ ...f, name: v }))} placeholder="e.g. Sarah's Family" />
+            <div>
+              <label className="block text-grandma-sm font-bold text-foreground mb-1">Role</label>
+              <select
+                value={newCodeForm.role}
+                onChange={(e) => setNewCodeForm((f) => ({ ...f, role: e.target.value }))}
+                className="w-full rounded-2xl border border-border bg-card p-4 text-grandma-sm text-foreground"
+              >
+                <option value="family">Family (can view & add updates)</option>
+                <option value="admin">Admin (full access)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-grandma-sm font-bold text-foreground mb-1">Linked family member (optional)</label>
+              <select
+                value={newCodeForm.family_member_id}
+                onChange={(e) => setNewCodeForm((f) => ({ ...f, family_member_id: e.target.value }))}
+                className="w-full rounded-2xl border border-border bg-card p-4 text-grandma-sm text-foreground"
+              >
+                <option value="">— None —</option>
+                {members.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={handleAddCode}
+              className="grandma-button w-full bg-primary text-primary-foreground rounded-2xl shadow-lg"
+            >
+              Generate Code ✓
+            </button>
+          </div>
+
+          {/* Existing codes */}
+          <div className="space-y-3">
+            {accessCodes.map((ac: any) => (
+              <div key={ac.id} className="bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-grandma-base font-bold text-foreground">{ac.name}</p>
+                  <p className="text-grandma-sm text-muted-foreground">
+                    {ac.role === "admin" ? "👑 Admin" : "👨‍👩‍👧 Family"} • Code: <span className="font-mono font-bold text-foreground">{ac.code}</span>
+                  </p>
+                </div>
+                <button onClick={() => copyCode(ac.code)} className="p-3 rounded-xl bg-muted" aria-label="Copy code">
+                  <Copy size={18} className="text-foreground" />
+                </button>
+                <button onClick={() => handleDeleteCode(ac.id)} className="p-3 rounded-xl bg-destructive/10">
+                  <Trash2 size={18} className="text-destructive" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

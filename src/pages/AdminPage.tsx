@@ -156,8 +156,8 @@ const AdminPage = () => {
                     </p>
                   )}
                 </div>
-                <button onClick={() => editMember(m)} className="p-3 rounded-xl bg-muted">
-                  <Save size={18} className="text-foreground" />
+                <button onClick={() => editMember(m)} className="p-3 rounded-xl bg-muted" aria-label="Edit">
+                  <Pencil size={18} className="text-foreground" />
                 </button>
                 <button onClick={() => handleDelete(m)} className="p-3 rounded-xl bg-destructive/10">
                   <Trash2 size={18} className="text-destructive" />

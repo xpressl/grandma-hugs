@@ -23,7 +23,49 @@ const AdminPage = () => {
   const fileRef = useRef<HTMLInputElement>(null);
   const musicFileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const [tab, setTab] = useState<"family" | "music">("family");
+  const [tab, setTab] = useState<"family" | "music" | "codes">("family");
+  const { logout } = useAccessCode();
+  const qc = useQueryClient();
+
+  // Access codes
+  const { data: accessCodes = [] } = useQuery({
+    queryKey: ["access_codes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("access_codes").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+  const [newCodeForm, setNewCodeForm] = useState({ name: "", role: "family", family_member_id: "" });
+
+  const generateCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  const handleAddCode = async () => {
+    if (!newCodeForm.name) { toast.error("Name is required"); return; }
+    const code = generateCode();
+    const { error } = await supabase.from("access_codes").insert({
+      code,
+      name: newCodeForm.name,
+      role: newCodeForm.role,
+      family_member_id: newCodeForm.family_member_id || null,
+    });
+    if (error) { toast.error("Failed to create code"); return; }
+    toast.success(`Code created: ${code}`);
+    setNewCodeForm({ name: "", role: "family", family_member_id: "" });
+    qc.invalidateQueries({ queryKey: ["access_codes"] });
+  };
+
+  const handleDeleteCode = async (id: string) => {
+    if (!confirm("Delete this access code?")) return;
+    await supabase.from("access_codes").delete().eq("id", id);
+    qc.invalidateQueries({ queryKey: ["access_codes"] });
+    toast.success("Code deleted");
+  };
+
+  const copyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast.success("Code copied!");
+  };
 
   // Music form state
   const [musicForm, setMusicForm] = useState({

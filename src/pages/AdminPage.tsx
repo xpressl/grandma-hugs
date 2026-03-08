@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useFamilyMembers, useAddFamilyMember, useUpdateFamilyMember, useDeleteFamilyMember, uploadFamilyPhoto } from "@/hooks/useFamilyData";
 import type { FamilyMember } from "@/hooks/useFamilyData";
-import { ArrowLeft, Plus, Trash2, Camera, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Camera, Save, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -156,8 +156,8 @@ const AdminPage = () => {
                     </p>
                   )}
                 </div>
-                <button onClick={() => editMember(m)} className="p-3 rounded-xl bg-muted">
-                  <Save size={18} className="text-foreground" />
+                <button onClick={() => editMember(m)} className="p-3 rounded-xl bg-muted" aria-label="Edit">
+                  <Pencil size={18} className="text-foreground" />
                 </button>
                 <button onClick={() => handleDelete(m)} className="p-3 rounded-xl bg-destructive/10">
                   <Trash2 size={18} className="text-destructive" />
@@ -210,15 +210,22 @@ const AdminPage = () => {
 
             {/* Parent selector */}
             <div>
-              <label className="block text-grandma-sm font-bold text-foreground mb-1">Parent</label>
+              <label className="block text-grandma-sm font-bold text-foreground mb-1">
+                👨‍👩‍👧 Parent (Who is their parent?)
+              </label>
+              <p className="text-sm text-muted-foreground mb-2">
+                {members.length === 0
+                  ? "💡 Add grandparents first — they don't need a parent."
+                  : "Select who this person's parent is in the family."}
+              </p>
               <select
                 value={form.parent_id}
                 onChange={(e) => setForm((f) => ({ ...f, parent_id: e.target.value }))}
                 className="w-full rounded-2xl border border-border bg-card p-4 text-grandma-sm text-foreground"
               >
-                <option value="">No parent (root)</option>
+                <option value="">— No parent (grandparent level) —</option>
                 {members.filter((m) => m.id !== editing?.id).map((m) => (
-                  <option key={m.id} value={m.id}>{m.name} ({m.relationship})</option>
+                  <option key={m.id} value={m.id}>↳ {m.name} ({m.relationship})</option>
                 ))}
               </select>
             </div>

@@ -10,6 +10,7 @@ import MusicPage from "@/pages/MusicPage";
 import PrayerPage from "@/pages/PrayerPage";
 import AdminPage from "@/pages/AdminPage";
 import FamilyTreePage from "@/pages/FamilyTreePage";
+import CalendarPage from "@/pages/CalendarPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<TodayPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/photos" element={<PhotosPage />} />
           <Route path="/music" element={<MusicPage />} />
           <Route path="/prayer" element={<PrayerPage />} />

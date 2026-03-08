@@ -1,8 +1,9 @@
-import { Heart, Image, Music, BookOpen } from "lucide-react";
+import { Heart, Image, Music, BookOpen, CalendarDays } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const tabs = [
   { path: "/", label: "Today", icon: Heart },
+  { path: "/calendar", label: "Calendar", icon: CalendarDays },
   { path: "/photos", label: "Photos", icon: Image },
   { path: "/music", label: "Music", icon: Music },
   { path: "/prayer", label: "Prayer", icon: BookOpen },
@@ -23,13 +24,11 @@ const BottomNav = () => {
               key={tab.path}
               onClick={() => navigate(tab.path)}
               className={`tab-button flex-1 ${
-                isActive
-                  ? "text-primary"
-                  : "text-muted-foreground"
+                isActive ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Icon size={32} strokeWidth={isActive ? 2.5 : 1.5} />
-              <span className="text-grandma-sm font-bold">{tab.label}</span>
+              <Icon size={28} strokeWidth={isActive ? 2.5 : 1.5} />
+              <span className="text-sm font-bold">{tab.label}</span>
             </button>
           );
         })}

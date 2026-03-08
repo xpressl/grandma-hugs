@@ -246,6 +246,14 @@ const AdminPage = () => {
         >
           <Music size={18} /> Music
         </button>
+        <button
+          onClick={() => setTab("codes")}
+          className={`flex-1 grandma-button rounded-2xl flex items-center justify-center gap-2 ${
+            tab === "codes" ? "bg-primary text-primary-foreground" : "bg-card border border-border text-foreground"
+          }`}
+        >
+          <Key size={18} /> Codes
+        </button>
       </div>
 
       {tab === "family" && (

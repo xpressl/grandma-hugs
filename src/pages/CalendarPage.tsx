@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useFamilyMembers, getAge } from "@/hooks/useFamilyData";
 import type { FamilyMember } from "@/hooks/useFamilyData";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toJewishDate, formatJewishDateInHebrew, toHebrewJewishDate } from "jewish-date";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",

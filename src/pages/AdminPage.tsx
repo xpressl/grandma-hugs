@@ -11,10 +11,25 @@ const AdminPage = () => {
   const addMember = useAddFamilyMember();
   const updateMember = useUpdateFamilyMember();
   const deleteMember = useDeleteFamilyMember();
+  const { data: occasions = [] } = useOccasions();
+  const addOccasion = useAddOccasion();
+  const deleteOccasion = useDeleteOccasion();
   const [editing, setEditing] = useState<FamilyMember | null>(null);
   const [showForm, setShowForm] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const musicFileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [tab, setTab] = useState<"family" | "music">("family");
+
+  // Music form state
+  const [musicForm, setMusicForm] = useState({
+    title: "",
+    occasion_type: "Celebration",
+    music_title: "",
+    family_member_id: "",
+  });
+  const [musicFile, setMusicFile] = useState<File | null>(null);
+  const [uploadingMusic, setUploadingMusic] = useState(false);
 
   const [form, setForm] = useState({
     name: "",

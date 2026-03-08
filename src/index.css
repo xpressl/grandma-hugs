@@ -102,6 +102,16 @@
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
   }
 
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
   .animate-gentle-float {
     animation: gentle-float 3s ease-in-out infinite;
   }
@@ -109,4 +119,18 @@
   .animate-warm-pulse {
     animation: warm-pulse 2s ease-in-out infinite;
   }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out both;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out both;
+  }
+
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
 }

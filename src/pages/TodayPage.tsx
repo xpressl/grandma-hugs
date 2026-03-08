@@ -5,6 +5,7 @@ import birthdayCake from "@/assets/birthday-cake.png";
 import { useNavigate } from "react-router-dom";
 import { Settings, TreePine, LogOut } from "lucide-react";
 import { useAccessCode } from "@/hooks/useAccessCode";
+import FamilySlideshow from "@/components/FamilySlideshow";
 
 const TodayPage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const TodayPage = () => {
   return (
     <div className="min-h-screen pb-28 px-4 pt-6 max-w-lg mx-auto">
       {/* Header */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-4 animate-slide-up">
         <img src={grandmaHero} alt="GrandmaJoy" className="w-28 h-28 mx-auto mb-3 rounded-full object-cover shadow-lg border-4 border-primary/30" />
         <h1 className="font-display text-grandma-2xl text-foreground mb-1">GrandmaJoy</h1>
         <p className="text-grandma-base text-muted-foreground">
@@ -32,17 +33,22 @@ const TodayPage = () => {
         </p>
       </div>
 
+      {/* Family Slideshow */}
+      <div className="animate-slide-up stagger-1">
+        <FamilySlideshow />
+      </div>
+
       {/* Quick actions */}
-      <div className="flex gap-3 mb-6">
-        <button onClick={() => navigate("/tree")} className="flex-1 grandma-button bg-accent text-accent-foreground rounded-2xl flex items-center justify-center gap-2 shadow-md">
+      <div className="flex gap-3 mb-6 animate-slide-up stagger-2">
+        <button onClick={() => navigate("/tree")} className="flex-1 grandma-button bg-accent text-accent-foreground rounded-2xl flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] transition-transform">
           <TreePine size={22} /> Family Tree
         </button>
         {isAdmin ? (
-          <button onClick={() => navigate("/admin")} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2">
+          <button onClick={() => navigate("/admin")} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
             <Settings size={22} /> Manage
           </button>
         ) : (
-          <button onClick={() => { logout(); navigate("/login"); }} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2">
+          <button onClick={() => { logout(); navigate("/login"); }} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
             <LogOut size={22} /> Sign Out
           </button>
         )}

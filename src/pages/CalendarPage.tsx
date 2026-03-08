@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useFamilyMembers, getAge } from "@/hooks/useFamilyData";
 import type { FamilyMember } from "@/hooks/useFamilyData";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toJewishDate, formatJewishDateInHebrew, toHebrewJewishDate } from "jewish-date";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -49,7 +50,13 @@ const CalendarPage = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const selectedMembers = selectedDay ? birthdayMap.get(selectedDay) || [] : [];
 
-  return (
+    // Hebrew month label (use 15th of month as representative)
+    const midMonth = new Date(year, month, 15);
+    const midJewish = toJewishDate(midMonth);
+    const midHebrew = toHebrewJewishDate(midJewish);
+    const hebrewMonthLabel = midHebrew.monthName + " " + midHebrew.year;
+
+    return (
     <div className="min-h-screen pb-28 px-4 pt-6 max-w-lg mx-auto">
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-6">
@@ -61,6 +68,7 @@ const CalendarPage = () => {
             {MONTH_NAMES[month]}
           </h1>
           <p className="text-grandma-sm text-muted-foreground">{year}</p>
+          <p className="text-sm text-muted-foreground/80 mt-0.5" dir="rtl">{hebrewMonthLabel}</p>
         </div>
         <button onClick={nextMonth} className="p-4 rounded-2xl bg-card border border-border" aria-label="Next month">
           <ChevronRight size={28} className="text-foreground" />
@@ -84,20 +92,29 @@ const CalendarPage = () => {
           const todayClass = isToday(day);
           const isSelected = selectedDay === day;
 
+          // Hebrew date
+          const gregDate = new Date(year, month, day);
+          const jewishDate = toJewishDate(gregDate);
+          const hebrewDate = toHebrewJewishDate(jewishDate);
+          const hebrewDay = hebrewDate.day;
+
           return (
             <button
               key={day}
               onClick={() => setSelectedDay(isSelected ? null : day)}
               className={`
-                relative aspect-square rounded-2xl flex flex-col items-center justify-center text-grandma-sm font-bold transition-all
+                relative aspect-square rounded-2xl flex flex-col items-center justify-center transition-all
                 ${todayClass ? "bg-primary text-primary-foreground shadow-md" : ""}
                 ${isSelected && !todayClass ? "bg-primary/20 border-2 border-primary" : ""}
                 ${!todayClass && !isSelected ? "bg-card border border-border" : ""}
               `}
             >
-              <span>{day}</span>
+              <span className="text-grandma-sm font-bold leading-none">{day}</span>
+              <span className={`text-[9px] leading-none mt-0.5 font-medium ${todayClass ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                {hebrewDay}
+              </span>
               {hasBirthday && (
-                <span className="text-xs mt-0.5">🎂</span>
+                <span className="text-[8px] leading-none">🎂</span>
               )}
             </button>
           );

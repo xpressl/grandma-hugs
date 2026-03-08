@@ -73,10 +73,10 @@ const CalendarPage = () => {
   const monthHolidays = Array.from(holidayMap.entries()).sort(([a], [b]) => a - b);
 
   return (
-    <div className="min-h-screen pb-28 px-4 pt-6 max-w-lg mx-auto">
+    <div className="min-h-screen pb-28 px-2 pt-6 max-w-lg mx-auto">
       {/* Month navigation */}
-      <div className="flex items-center justify-between mb-6">
-        <button onClick={prevMonth} className="p-4 rounded-2xl bg-card border border-border" aria-label="Previous month">
+      <div className="flex items-center justify-between mb-6 animate-slide-up">
+        <button onClick={prevMonth} className="p-4 rounded-2xl bg-card border border-border hover:scale-105 transition-transform" aria-label="Previous month">
           <ChevronLeft size={28} className="text-foreground" />
         </button>
         <div className="text-center">
@@ -86,13 +86,13 @@ const CalendarPage = () => {
           <p className="text-grandma-sm text-muted-foreground">{year}</p>
           <p className="text-grandma-sm text-muted-foreground font-medium mt-1" dir="rtl">{hebrewMonthLabel}</p>
         </div>
-        <button onClick={nextMonth} className="p-4 rounded-2xl bg-card border border-border" aria-label="Next month">
+        <button onClick={nextMonth} className="p-4 rounded-2xl bg-card border border-border hover:scale-105 transition-transform" aria-label="Next month">
           <ChevronRight size={28} className="text-foreground" />
         </button>
       </div>
 
       {/* Day headers */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="grid grid-cols-7 gap-1.5 mb-2">
         {DAY_NAMES.map((d) => (
           <div key={d} className="text-center text-sm font-bold text-muted-foreground py-2">
             {d}
@@ -100,10 +100,10 @@ const CalendarPage = () => {
         ))}
       </div>
 
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
+      {/* Calendar grid — bigger boxes */}
+      <div className="grid grid-cols-7 gap-1.5">
         {cells.map((day, i) => {
-          if (day === null) return <div key={`empty-${i}`} />;
+          if (day === null) return <div key={`empty-${i}`} className="min-h-[60px]" />;
           const hasBirthday = birthdayMap.has(day);
           const holiday = holidayMap.get(day);
           const isShabDay = shabbatDays.has(day);
@@ -120,20 +120,20 @@ const CalendarPage = () => {
               key={day}
               onClick={() => setSelectedDay(isSelected ? null : day)}
               className={`
-                relative aspect-square rounded-2xl flex flex-col items-center justify-center transition-all
-                ${todayClass ? "bg-primary text-primary-foreground shadow-md" : ""}
-                ${isSelected && !todayClass ? "bg-primary/20 border-2 border-primary" : ""}
-                ${holiday && !todayClass && !isSelected ? "bg-accent/40 border border-accent" : ""}
-                ${isShabDay && !todayClass && !isSelected && !holiday ? "bg-muted/50" : ""}
+                relative min-h-[60px] rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:scale-[1.05]
+                ${todayClass ? "bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30" : ""}
+                ${isSelected && !todayClass ? "bg-primary/20 border-2 border-primary scale-[1.05]" : ""}
+                ${holiday && !todayClass && !isSelected ? "bg-accent/30 border border-accent" : ""}
+                ${isShabDay && !todayClass && !isSelected && !holiday ? "bg-muted/50 border border-border" : ""}
                 ${!todayClass && !isSelected && !holiday && !isShabDay ? "bg-card border border-border" : ""}
               `}
             >
-              <span className="text-grandma-sm font-bold leading-none">{day}</span>
-              <span className={`text-[9px] leading-none mt-0.5 font-medium ${todayClass ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+              <span className="text-base font-bold leading-none">{day}</span>
+              <span className={`text-[10px] leading-none mt-1 font-medium ${todayClass ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                 {hebrewDay}
               </span>
-              {holiday && <span className="text-[8px] leading-none">{holiday.emoji}</span>}
-              {hasBirthday && !holiday && <span className="text-[8px] leading-none">🎂</span>}
+              {holiday && <span className="text-xs leading-none mt-0.5">{holiday.emoji}</span>}
+              {hasBirthday && !holiday && <span className="text-xs leading-none mt-0.5">🎂</span>}
             </button>
           );
         })}

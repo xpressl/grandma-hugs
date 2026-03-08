@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useFamilyMembers, useAddFamilyMember, useUpdateFamilyMember, useDeleteFamilyMember, uploadFamilyPhoto, useOccasions, useAddOccasion, useDeleteOccasion, uploadMusicFile } from "@/hooks/useFamilyData";
 import type { FamilyMember, Occasion } from "@/hooks/useFamilyData";
-import { ArrowLeft, Plus, Trash2, Camera, Save, Pencil } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Camera, Pencil, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 

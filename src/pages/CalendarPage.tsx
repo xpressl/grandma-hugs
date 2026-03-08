@@ -50,7 +50,13 @@ const CalendarPage = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const selectedMembers = selectedDay ? birthdayMap.get(selectedDay) || [] : [];
 
-  return (
+    // Hebrew month label (use 15th of month as representative)
+    const midMonth = new Date(year, month, 15);
+    const midJewish = toJewishDate(midMonth);
+    const midHebrew = toHebrewJewishDate(midJewish);
+    const hebrewMonthLabel = midHebrew.monthName + " " + midHebrew.year;
+
+    return (
     <div className="min-h-screen pb-28 px-4 pt-6 max-w-lg mx-auto">
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-6">
@@ -62,6 +68,7 @@ const CalendarPage = () => {
             {MONTH_NAMES[month]}
           </h1>
           <p className="text-grandma-sm text-muted-foreground">{year}</p>
+          <p className="text-sm text-muted-foreground/80 mt-0.5" dir="rtl">{hebrewMonthLabel}</p>
         </div>
         <button onClick={nextMonth} className="p-4 rounded-2xl bg-card border border-border" aria-label="Next month">
           <ChevronRight size={28} className="text-foreground" />

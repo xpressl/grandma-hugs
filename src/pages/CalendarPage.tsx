@@ -85,20 +85,29 @@ const CalendarPage = () => {
           const todayClass = isToday(day);
           const isSelected = selectedDay === day;
 
+          // Hebrew date
+          const gregDate = new Date(year, month, day);
+          const jewishDate = toJewishDate(gregDate);
+          const hebrewDate = toHebrewJewishDate(jewishDate);
+          const hebrewDay = hebrewDate.day;
+
           return (
             <button
               key={day}
               onClick={() => setSelectedDay(isSelected ? null : day)}
               className={`
-                relative aspect-square rounded-2xl flex flex-col items-center justify-center text-grandma-sm font-bold transition-all
+                relative aspect-square rounded-2xl flex flex-col items-center justify-center transition-all
                 ${todayClass ? "bg-primary text-primary-foreground shadow-md" : ""}
                 ${isSelected && !todayClass ? "bg-primary/20 border-2 border-primary" : ""}
                 ${!todayClass && !isSelected ? "bg-card border border-border" : ""}
               `}
             >
-              <span>{day}</span>
+              <span className="text-grandma-sm font-bold leading-none">{day}</span>
+              <span className={`text-[9px] leading-none mt-0.5 font-medium ${todayClass ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                {hebrewDay}
+              </span>
               {hasBirthday && (
-                <span className="text-xs mt-0.5">🎂</span>
+                <span className="text-[8px] leading-none">🎂</span>
               )}
             </button>
           );

@@ -223,6 +223,9 @@ const AdminPage = () => {
         <h1 className="font-display text-grandma-xl text-foreground flex-1">
           ⚙️ Admin
         </h1>
+        <button onClick={() => { logout(); navigate("/login"); }} className="p-3 rounded-2xl bg-card border border-border" aria-label="Sign out">
+          <LogOut size={24} className="text-foreground" />
+        </button>
       </div>
 
       {/* Tab switcher */}

@@ -5,6 +5,7 @@ import birthdayCake from "@/assets/birthday-cake.png";
 import { useNavigate } from "react-router-dom";
 import { Settings, TreePine, LogOut } from "lucide-react";
 import { useAccessCode } from "@/hooks/useAccessCode";
+import FamilySlideshow from "@/components/FamilySlideshow";
 
 const TodayPage = () => {
   const navigate = useNavigate();

@@ -118,3 +118,67 @@ export function getAge(birthYear: number | null): number | null {
   if (!birthYear) return null;
   return new Date().getFullYear() - birthYear;
 }
+
+// === Occasions / Music ===
+
+export type Occasion = {
+  id: string;
+  title: string;
+  occasion_type: string;
+  date_english: string | null;
+  date_hebrew: string | null;
+  family_member_id: string | null;
+  music_url: string | null;
+  music_title: string | null;
+  created_at: string;
+};
+
+export function useOccasions() {
+  return useQuery({
+    queryKey: ["occasions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("occasions")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Occasion[];
+    },
+  });
+}
+
+export function useAddOccasion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (occasion: Omit<Occasion, "id" | "created_at">) => {
+      const { data, error } = await supabase
+        .from("occasions")
+        .insert(occasion)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["occasions"] }),
+  });
+}
+
+export function useDeleteOccasion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("occasions").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["occasions"] }),
+  });
+}
+
+export async function uploadMusicFile(file: File, occasionId: string): Promise<string> {
+  const ext = file.name.split(".").pop();
+  const path = `${occasionId}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("family-music").upload(path, file);
+  if (error) throw error;
+  const { data } = supabase.storage.from("family-music").getPublicUrl(path);
+  return data.publicUrl;
+}

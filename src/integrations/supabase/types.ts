@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_codes: {
+        Row: {
+          code: string
+          created_at: string
+          family_member_id: string | null
+          id: string
+          name: string
+          role: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          family_member_id?: string | null
+          id?: string
+          name: string
+          role?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          family_member_id?: string | null
+          id?: string
+          name?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_codes_family_member_id_fkey"
+            columns: ["family_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_members: {
         Row: {
           birth_year: number | null

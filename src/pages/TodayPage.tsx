@@ -3,11 +3,13 @@ import type { FamilyMember } from "@/hooks/useFamilyData";
 import grandmaHero from "@/assets/grandma-hero.png";
 import birthdayCake from "@/assets/birthday-cake.png";
 import { useNavigate } from "react-router-dom";
-import { Settings, TreePine } from "lucide-react";
+import { Settings, TreePine, LogOut } from "lucide-react";
+import { useAccessCode } from "@/hooks/useAccessCode";
 
 const TodayPage = () => {
   const navigate = useNavigate();
   const { data: members = [], isLoading } = useFamilyMembers();
+  const { session, isAdmin, logout } = useAccessCode();
   const todaysBirthdays = getTodaysBirthdays(members);
   const upcoming = getUpcomingBirthdays(members, 4);
 
@@ -25,7 +27,9 @@ const TodayPage = () => {
       <div className="text-center mb-6">
         <img src={grandmaHero} alt="GrandmaJoy" className="w-28 h-28 mx-auto mb-3 rounded-full object-cover shadow-lg border-4 border-primary/30" />
         <h1 className="font-display text-grandma-2xl text-foreground mb-1">GrandmaJoy</h1>
-        <p className="text-grandma-base text-muted-foreground">Your family, one tap away 💛</p>
+        <p className="text-grandma-base text-muted-foreground">
+          Welcome, {session?.name || "Family"} 💛
+        </p>
       </div>
 
       {/* Quick actions */}
@@ -33,9 +37,15 @@ const TodayPage = () => {
         <button onClick={() => navigate("/tree")} className="flex-1 grandma-button bg-accent text-accent-foreground rounded-2xl flex items-center justify-center gap-2 shadow-md">
           <TreePine size={22} /> Family Tree
         </button>
-        <button onClick={() => navigate("/admin")} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2">
-          <Settings size={22} /> Manage
-        </button>
+        {isAdmin ? (
+          <button onClick={() => navigate("/admin")} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2">
+            <Settings size={22} /> Manage
+          </button>
+        ) : (
+          <button onClick={() => { logout(); navigate("/login"); }} className="flex-1 grandma-button bg-card text-foreground border border-border rounded-2xl flex items-center justify-center gap-2">
+            <LogOut size={22} /> Sign Out
+          </button>
+        )}
       </div>
 
       {/* Today's Birthdays */}
@@ -62,7 +72,7 @@ const TodayPage = () => {
             <p className="text-grandma-base text-muted-foreground">
               {members.length === 0 ? "Add your family to get started!" : "No birthdays today, but your family loves you!"}
             </p>
-            {members.length === 0 && (
+            {members.length === 0 && isAdmin && (
               <button onClick={() => navigate("/admin")} className="grandma-button bg-primary text-primary-foreground rounded-2xl mt-4">
                 Add Family Members
               </button>

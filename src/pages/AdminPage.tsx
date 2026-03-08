@@ -1,10 +1,13 @@
 import { useState, useRef } from "react";
 import { useFamilyMembers, useAddFamilyMember, useUpdateFamilyMember, useDeleteFamilyMember, uploadFamilyPhoto, useOccasions, useAddOccasion, useDeleteOccasion, uploadMusicFile } from "@/hooks/useFamilyData";
 import type { FamilyMember, Occasion } from "@/hooks/useFamilyData";
-import { ArrowLeft, Plus, Trash2, Camera, Pencil, Music } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Camera, Pencil, Music, Key, Copy, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { toJewishDate, formatJewishDateInHebrew } from "jewish-date";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAccessCode } from "@/hooks/useAccessCode";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -20,7 +23,49 @@ const AdminPage = () => {
   const fileRef = useRef<HTMLInputElement>(null);
   const musicFileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const [tab, setTab] = useState<"family" | "music">("family");
+  const [tab, setTab] = useState<"family" | "music" | "codes">("family");
+  const { logout } = useAccessCode();
+  const qc = useQueryClient();
+
+  // Access codes
+  const { data: accessCodes = [] } = useQuery({
+    queryKey: ["access_codes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("access_codes").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+  const [newCodeForm, setNewCodeForm] = useState({ name: "", role: "family", family_member_id: "" });
+
+  const generateCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  const handleAddCode = async () => {
+    if (!newCodeForm.name) { toast.error("Name is required"); return; }
+    const code = generateCode();
+    const { error } = await supabase.from("access_codes").insert({
+      code,
+      name: newCodeForm.name,
+      role: newCodeForm.role,
+      family_member_id: newCodeForm.family_member_id || null,
+    });
+    if (error) { toast.error("Failed to create code"); return; }
+    toast.success(`Code created: ${code}`);
+    setNewCodeForm({ name: "", role: "family", family_member_id: "" });
+    qc.invalidateQueries({ queryKey: ["access_codes"] });
+  };
+
+  const handleDeleteCode = async (id: string) => {
+    if (!confirm("Delete this access code?")) return;
+    await supabase.from("access_codes").delete().eq("id", id);
+    qc.invalidateQueries({ queryKey: ["access_codes"] });
+    toast.success("Code deleted");
+  };
+
+  const copyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast.success("Code copied!");
+  };
 
   // Music form state
   const [musicForm, setMusicForm] = useState({
@@ -178,6 +223,9 @@ const AdminPage = () => {
         <h1 className="font-display text-grandma-xl text-foreground flex-1">
           ⚙️ Admin
         </h1>
+        <button onClick={() => { logout(); navigate("/login"); }} className="p-3 rounded-2xl bg-card border border-border" aria-label="Sign out">
+          <LogOut size={24} className="text-foreground" />
+        </button>
       </div>
 
       {/* Tab switcher */}
@@ -197,6 +245,14 @@ const AdminPage = () => {
           }`}
         >
           <Music size={18} /> Music
+        </button>
+        <button
+          onClick={() => setTab("codes")}
+          className={`flex-1 grandma-button rounded-2xl flex items-center justify-center gap-2 ${
+            tab === "codes" ? "bg-primary text-primary-foreground" : "bg-card border border-border text-foreground"
+          }`}
+        >
+          <Key size={18} /> Codes
         </button>
       </div>
 
@@ -430,6 +486,68 @@ const AdminPage = () => {
                 <p className="text-grandma-base text-muted-foreground">No music yet. Add your first song above!</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {tab === "codes" && (
+        <div className="space-y-6">
+          <div className="bg-card rounded-2xl p-5 border border-border space-y-3">
+            <h2 className="font-display text-grandma-lg text-foreground">🔑 Create Access Code</h2>
+            <p className="text-grandma-sm text-muted-foreground">
+              Share these codes with family so they can log in and view/update info.
+            </p>
+            <FieldInput label="Name *" value={newCodeForm.name} onChange={(v) => setNewCodeForm((f) => ({ ...f, name: v }))} placeholder="e.g. Sarah's Family" />
+            <div>
+              <label className="block text-grandma-sm font-bold text-foreground mb-1">Role</label>
+              <select
+                value={newCodeForm.role}
+                onChange={(e) => setNewCodeForm((f) => ({ ...f, role: e.target.value }))}
+                className="w-full rounded-2xl border border-border bg-card p-4 text-grandma-sm text-foreground"
+              >
+                <option value="family">Family (can view & add updates)</option>
+                <option value="admin">Admin (full access)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-grandma-sm font-bold text-foreground mb-1">Linked family member (optional)</label>
+              <select
+                value={newCodeForm.family_member_id}
+                onChange={(e) => setNewCodeForm((f) => ({ ...f, family_member_id: e.target.value }))}
+                className="w-full rounded-2xl border border-border bg-card p-4 text-grandma-sm text-foreground"
+              >
+                <option value="">— None —</option>
+                {members.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={handleAddCode}
+              className="grandma-button w-full bg-primary text-primary-foreground rounded-2xl shadow-lg"
+            >
+              Generate Code ✓
+            </button>
+          </div>
+
+          {/* Existing codes */}
+          <div className="space-y-3">
+            {accessCodes.map((ac: any) => (
+              <div key={ac.id} className="bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-grandma-base font-bold text-foreground">{ac.name}</p>
+                  <p className="text-grandma-sm text-muted-foreground">
+                    {ac.role === "admin" ? "👑 Admin" : "👨‍👩‍👧 Family"} • Code: <span className="font-mono font-bold text-foreground">{ac.code}</span>
+                  </p>
+                </div>
+                <button onClick={() => copyCode(ac.code)} className="p-3 rounded-xl bg-muted" aria-label="Copy code">
+                  <Copy size={18} className="text-foreground" />
+                </button>
+                <button onClick={() => handleDeleteCode(ac.id)} className="p-3 rounded-xl bg-destructive/10">
+                  <Trash2 size={18} className="text-destructive" />
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}

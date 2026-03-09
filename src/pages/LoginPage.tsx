@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAccessCode } from "@/hooks/useAccessCode";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ const LoginPage = () => {
   const [code, setCode] = useState("");
   const [checking, setChecking] = useState(false);
   const { login } = useAccessCode();
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!code.trim()) {
@@ -14,11 +16,12 @@ const LoginPage = () => {
       return;
     }
     setChecking(true);
+
     const { data, error } = await supabase
       .from("access_codes")
       .select("*")
       .eq("code", code.trim())
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
       toast.error("Invalid code. Please try again.");
@@ -28,7 +31,7 @@ const LoginPage = () => {
 
     login(code.trim());
     toast.success(`Welcome, ${data.name}! 💛`);
-    window.location.href = "/";
+    navigate("/", { replace: true });
   };
 
   return (
